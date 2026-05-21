@@ -15,7 +15,9 @@ namespace BE
             Descripcion = descripcion ?? string.Empty;
         }
 
-        public Lote(string nombre, string descripcion) : this(0, nombre, descripcion) { }
+        public Lote(string nombre, string descripcion) : this(0, nombre, descripcion)
+        {
+        }
 
         public void Agregar(UnidadDeVenta componente)
         {
@@ -34,6 +36,7 @@ namespace BE
                 throw new ArgumentNullException(nameof(componente));
             _componentes.Remove(componente);
         }
+
         public IReadOnlyList<UnidadDeVenta> ObtenerComponentes()
             => new ReadOnlyCollection<UnidadDeVenta>(_componentes);
 

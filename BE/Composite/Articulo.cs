@@ -5,6 +5,7 @@ namespace BE
     public class Articulo : UnidadDeVenta
     {
         private decimal _precioBase;
+
         public decimal PrecioBase
         {
             get => _precioBase;
@@ -24,7 +25,9 @@ namespace BE
             PrecioBase = precioBase;
         }
 
-        public Articulo(string nombre, string descripcion, decimal precioBase) : this(0, nombre, descripcion, precioBase) { }
+        public Articulo(string nombre, string descripcion, decimal precioBase) : this(0, nombre, descripcion, precioBase)
+        {
+        }
 
         public override decimal ObtenerPrecio() => _precioBase;
 

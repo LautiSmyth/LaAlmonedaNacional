@@ -17,6 +17,7 @@ namespace BE
         public DateTime? FechaCierre { get; private set; }
 
         public event Action<string> OnNotificacion;
+
         public event Action<IObserver, string> OnNotificacionSuscriptor;
 
         public Subasta(int id, UnidadDeVenta item)

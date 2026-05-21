@@ -30,7 +30,7 @@ namespace GUI
         private void ConfigurarLimitesEntrada()
         {
             txtNombreLote.MaxLength = 200;
-            txtDescLote.MaxLength   = 500;
+            txtDescLote.MaxLength = 500;
         }
 
         private void CargarLotes()
@@ -52,7 +52,7 @@ namespace GUI
                 cmbComponentes.DataSource = null;
                 cmbComponentes.DataSource = catalogo;
                 cmbComponentes.DisplayMember = "Nombre";
-                cmbComponentes.AutoCompleteMode   = AutoCompleteMode.SuggestAppend;
+                cmbComponentes.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                 cmbComponentes.AutoCompleteSource = AutoCompleteSource.ListItems;
             }
             catch (Exception ex) { MostrarError("Error al cargar catálogo", ex); }
@@ -62,11 +62,11 @@ namespace GUI
         {
             if (lstLotes.SelectedItem is Lote lote)
             {
-                _loteSeleccionado         = lote;
-                txtNombreLote.Text        = lote.Nombre;
-                txtDescLote.Text          = lote.Descripcion;
-                btnActualizar.Enabled     = true;
-                btnEliminarLote.Enabled   = true;
+                _loteSeleccionado = lote;
+                txtNombreLote.Text = lote.Nombre;
+                txtDescLote.Text = lote.Descripcion;
+                btnActualizar.Enabled = true;
+                btnEliminarLote.Enabled = true;
                 RefrescarArbolLote(lote.Id);
             }
         }
@@ -98,14 +98,14 @@ namespace GUI
             if (udv is Lote lote)
             {
                 var nodo = new TreeNode($"[Lote] {lote.Nombre}  (${lote.ObtenerPrecio():N2})")
-                    { Tag = lote, ForeColor = Estilo.Header };
+                { Tag = lote, ForeColor = Estilo.Header };
                 foreach (var comp in lote.ObtenerComponentes())
                     nodo.Nodes.Add(CrearNodoArbol(comp));
                 return nodo;
             }
             if (udv is Articulo art)
                 return new TreeNode($"[Artículo] {art.Nombre}  (${art.PrecioBase:N2})")
-                    { Tag = art, ForeColor = Estilo.BtnSuccess };
+                { Tag = art, ForeColor = Estilo.BtnSuccess };
             return new TreeNode(udv.Nombre);
         }
 
@@ -131,7 +131,7 @@ namespace GUI
             { MostrarAviso("El nombre no puede estar vacío."); return; }
             try
             {
-                _loteSeleccionado.Nombre      = txtNombreLote.Text.Trim();
+                _loteSeleccionado.Nombre = txtNombreLote.Text.Trim();
                 _loteSeleccionado.Descripcion = txtDescLote.Text.Trim();
                 _bll.ActualizarLote(_loteSeleccionado);
                 MostrarExito("Lote actualizado.");
@@ -151,8 +151,8 @@ namespace GUI
 
             try
             {
-                UnidadDeVenta udv        = _bll.ObtenerPorId(_loteSeleccionado.Id);
-                bool          tieneHijos = udv is Lote lt && lt.ObtenerComponentes().Count > 0;
+                UnidadDeVenta udv = _bll.ObtenerPorId(_loteSeleccionado.Id);
+                bool tieneHijos = udv is Lote lt && lt.ObtenerComponentes().Count > 0;
 
                 if (tieneHijos)
                 {
@@ -206,8 +206,8 @@ namespace GUI
 
                 if (lotePadreActual != 0)
                 {
-                    UnidadDeVenta loteActual   = _bll.ObtenerPorId(lotePadreActual);
-                    string        nombreActual = loteActual?.Nombre ?? $"#{lotePadreActual}";
+                    UnidadDeVenta loteActual = _bll.ObtenerPorId(lotePadreActual);
+                    string nombreActual = loteActual?.Nombre ?? $"#{lotePadreActual}";
                     var respuesta = MessageBox.Show(
                         $"'{udv.Nombre}' ya pertenece al lote '{nombreActual}'.\n\n" +
                         $"¿Desea moverlo a '{_loteSeleccionado.Nombre}'?",
@@ -244,20 +244,22 @@ namespace GUI
 
         private void LimpiarFormulario()
         {
-            _loteSeleccionado       = null;
+            _loteSeleccionado = null;
             txtNombreLote.Clear();
             txtDescLote.Clear();
             trvLote.Nodes.Clear();
-            lblPrecioLote.Text      = "";
-            btnActualizar.Enabled   = false;
+            lblPrecioLote.Text = "";
+            btnActualizar.Enabled = false;
             btnEliminarLote.Enabled = false;
             lstLotes.ClearSelected();
         }
 
         private void MostrarExito(string msg) =>
-            MessageBox.Show(msg, "Éxito",    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(msg, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
         private void MostrarAviso(string msg) =>
             MessageBox.Show(msg, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
         private void MostrarError(string ctx, Exception ex) =>
             MessageBox.Show($"{ctx}:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }

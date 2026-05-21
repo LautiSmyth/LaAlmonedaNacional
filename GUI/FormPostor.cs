@@ -32,11 +32,11 @@ namespace GUI
 
         private void ConfigurarLimitesEntrada()
         {
-            txtNombre.MaxLength   = 200;
-            txtEmail.MaxLength    = 200;
+            txtNombre.MaxLength = 200;
+            txtEmail.MaxLength = 200;
             txtTelefono.MaxLength = 50;
 
-            txtEmail.KeyPress    += txtEmail_KeyPress;
+            txtEmail.KeyPress += txtEmail_KeyPress;
             txtTelefono.KeyPress += txtTelefono_KeyPress;
         }
 
@@ -67,14 +67,14 @@ namespace GUI
                 dgvPostores.DataSource = _bll.ObtenerTodos();
                 if (dgvPostores.Columns.Count > 0)
                 {
-                    dgvPostores.Columns["Id"].HeaderText          = "ID";
-                    dgvPostores.Columns["Id"].Width               = 50;
+                    dgvPostores.Columns["Id"].HeaderText = "ID";
+                    dgvPostores.Columns["Id"].Width = 50;
                     dgvPostores.Columns["NombrePostor"].HeaderText = "Nombre";
-                    dgvPostores.Columns["NombrePostor"].Width     = 200;
-                    dgvPostores.Columns["Email"].HeaderText       = "Email";
-                    dgvPostores.Columns["Email"].Width            = 200;
-                    dgvPostores.Columns["Telefono"].HeaderText    = "Teléfono";
-                    dgvPostores.Columns["Telefono"].Width         = 130;
+                    dgvPostores.Columns["NombrePostor"].Width = 200;
+                    dgvPostores.Columns["Email"].HeaderText = "Email";
+                    dgvPostores.Columns["Email"].Width = 200;
+                    dgvPostores.Columns["Telefono"].HeaderText = "Teléfono";
+                    dgvPostores.Columns["Telefono"].Width = 130;
                     if (dgvPostores.Columns.Contains("OnNotificacion"))
                         dgvPostores.Columns["OnNotificacion"].Visible = false;
                 }
@@ -89,12 +89,12 @@ namespace GUI
             if (_actualizando) return;
             if (dgvPostores.CurrentRow?.DataBoundItem is Postor p)
             {
-                _postorSeleccionado  = p;
-                txtNombre.Text       = p.NombrePostor;
-                txtEmail.Text        = p.Email;
-                txtTelefono.Text     = p.Telefono;
-                btnGuardar.Text      = "Actualizar";
-                btnEliminar.Enabled  = true;
+                _postorSeleccionado = p;
+                txtNombre.Text = p.NombrePostor;
+                txtEmail.Text = p.Email;
+                txtTelefono.Text = p.Telefono;
+                btnGuardar.Text = "Actualizar";
+                btnEliminar.Enabled = true;
             }
         }
 
@@ -154,21 +154,23 @@ namespace GUI
 
         private void LimpiarFormulario()
         {
-            _actualizando       = true;
+            _actualizando = true;
             _postorSeleccionado = null;
             txtNombre.Clear();
             txtEmail.Clear();
             txtTelefono.Clear();
-            btnGuardar.Text     = "Guardar";
+            btnGuardar.Text = "Guardar";
             btnEliminar.Enabled = false;
             dgvPostores.ClearSelection();
             _actualizando = false;
         }
 
         private void MostrarExito(string msg) =>
-            MessageBox.Show(msg, "Éxito",    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(msg, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
         private void MostrarAviso(string msg) =>
             MessageBox.Show(msg, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
         private void MostrarError(string ctx, Exception ex) =>
             MessageBox.Show($"{ctx}:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }

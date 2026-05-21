@@ -162,6 +162,7 @@ namespace BLL
         }
 
         public DataTable ObtenerSubastasActivas() => _subastaDAL.ObtenerActivas();
+
         public DataTable ObtenerHistorial() => _subastaDAL.ObtenerHistorial();
 
         private Subasta ObtenerSubastaActiva(int subastaId)

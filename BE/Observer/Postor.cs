@@ -18,7 +18,10 @@ namespace BE
             Email = email ?? throw new ArgumentNullException(nameof(email));
             Telefono = telefono;
         }
-        public Postor(string nombrePostor, string email, string telefono = null) : this(0, nombrePostor, email, telefono) { }
+
+        public Postor(string nombrePostor, string email, string telefono = null) : this(0, nombrePostor, email, telefono)
+        {
+        }
 
         public void Actualizar(string mensaje)
         {

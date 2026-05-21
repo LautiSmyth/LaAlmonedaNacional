@@ -10,22 +10,23 @@ namespace GUI
 {
     public partial class FormSubasta : Form
     {
-        private readonly SubastaBLL       _subastaBLL = new SubastaBLL();
-        private readonly PostorBLL        _postorBLL  = new PostorBLL();
-        private readonly UnidadDeVentaBLL _udvBLL     = new UnidadDeVentaBLL();
+        private readonly SubastaBLL _subastaBLL = new SubastaBLL();
+        private readonly PostorBLL _postorBLL = new PostorBLL();
+        private readonly UnidadDeVentaBLL _udvBLL = new UnidadDeVentaBLL();
 
-        private Subasta              _subastaActual  = null;
-        private List<UnidadDeVenta>  _catalogoCompleto = new List<UnidadDeVenta>();
-        private List<Postor>         _postoresCache  = new List<Postor>();
+        private Subasta _subastaActual = null;
+        private List<UnidadDeVenta> _catalogoCompleto = new List<UnidadDeVenta>();
+        private List<Postor> _postoresCache = new List<Postor>();
 
         private class EntradaLog
         {
             public string Tiempo;
             public string SubastaNombre;
-            public int    SubastaId;
+            public int SubastaId;
             public string PostorNombre;
             public string Mensaje;
         }
+
         private readonly List<EntradaLog> _log = new List<EntradaLog>();
 
         public FormSubasta()
@@ -42,7 +43,7 @@ namespace GUI
         {
             dgvSuscriptores.ColumnHeadersDefaultCellStyle.BackColor = Estilo.Header;
             dgvSuscriptores.ColumnHeadersDefaultCellStyle.ForeColor = Estilo.Gold;
-            dgvSuscriptores.ColumnHeadersDefaultCellStyle.Font      =
+            dgvSuscriptores.ColumnHeadersDefaultCellStyle.Font =
                 new Font("Segoe UI", 9F, FontStyle.Bold);
             dgvSuscriptores.AlternatingRowsDefaultCellStyle.BackColor = Estilo.RowAlt;
             dgvSuscriptores.DefaultCellStyle.SelectionBackColor = Estilo.Gold;
@@ -51,15 +52,15 @@ namespace GUI
 
         private void ConfigurarLimitesEntrada()
         {
-            txtMontoPuja.MaxLength  = 21;
-            txtMontoPuja.KeyPress  += txtDecimal_KeyPress;
+            txtMontoPuja.MaxLength = 21;
+            txtMontoPuja.KeyPress += txtDecimal_KeyPress;
         }
 
         private void txtDecimal_KeyPress(object sender, KeyPressEventArgs e)
         {
             TextBox tb = (TextBox)sender;
             bool esSeparador = e.KeyChar == ',' || e.KeyChar == '.';
-            bool esDigito    = char.IsDigit(e.KeyChar);
+            bool esDigito = char.IsDigit(e.KeyChar);
             bool esBackspace = e.KeyChar == (char)Keys.Back;
 
             if (!esDigito && !esSeparador && !esBackspace)
@@ -74,10 +75,10 @@ namespace GUI
             try
             {
                 DataTable tabla = _subastaBLL.ObtenerSubastasActivas();
-                lstSubastas.DataSource    = null;
-                lstSubastas.DataSource    = tabla;
+                lstSubastas.DataSource = null;
+                lstSubastas.DataSource = tabla;
                 lstSubastas.DisplayMember = "NombreItem";
-                lstSubastas.ValueMember   = "Id";
+                lstSubastas.ValueMember = "Id";
                 ActualizarFiltroSubastaLog(tabla);
             }
             catch (Exception ex) { MostrarError("Error al cargar subastas", ex); }
@@ -118,10 +119,10 @@ namespace GUI
             else
                 filtrado = _catalogoCompleto;
 
-            cmbItem.DataSource         = null;
-            cmbItem.DataSource         = new List<UnidadDeVenta>(filtrado);
-            cmbItem.DisplayMember      = "Nombre";
-            cmbItem.AutoCompleteMode   = AutoCompleteMode.SuggestAppend;
+            cmbItem.DataSource = null;
+            cmbItem.DataSource = new List<UnidadDeVenta>(filtrado);
+            cmbItem.DisplayMember = "Nombre";
+            cmbItem.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             cmbItem.AutoCompleteSource = AutoCompleteSource.ListItems;
         }
 
@@ -131,16 +132,16 @@ namespace GUI
             {
                 _postoresCache = _postorBLL.ObtenerTodos();
 
-                cmbPostorSuscribir.DataSource         = null;
-                cmbPostorSuscribir.DataSource         = new List<Postor>(_postoresCache);
-                cmbPostorSuscribir.DisplayMember      = "NombrePostor";
-                cmbPostorSuscribir.AutoCompleteMode   = AutoCompleteMode.SuggestAppend;
+                cmbPostorSuscribir.DataSource = null;
+                cmbPostorSuscribir.DataSource = new List<Postor>(_postoresCache);
+                cmbPostorSuscribir.DisplayMember = "NombrePostor";
+                cmbPostorSuscribir.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                 cmbPostorSuscribir.AutoCompleteSource = AutoCompleteSource.ListItems;
 
-                cmbPostorPuja.DataSource         = null;
-                cmbPostorPuja.DataSource         = new List<Postor>(_postoresCache);
-                cmbPostorPuja.DisplayMember      = "NombrePostor";
-                cmbPostorPuja.AutoCompleteMode   = AutoCompleteMode.SuggestAppend;
+                cmbPostorPuja.DataSource = null;
+                cmbPostorPuja.DataSource = new List<Postor>(_postoresCache);
+                cmbPostorPuja.DisplayMember = "NombrePostor";
+                cmbPostorPuja.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                 cmbPostorPuja.AutoCompleteSource = AutoCompleteSource.ListItems;
 
                 ActualizarFiltroPostorLog();
@@ -163,9 +164,11 @@ namespace GUI
             }
         }
 
-        private void rbTodos_CheckedChanged(object sender, EventArgs e)        => AplicarFiltroTipoItem();
+        private void rbTodos_CheckedChanged(object sender, EventArgs e) => AplicarFiltroTipoItem();
+
         private void rbSoloArticulos_CheckedChanged(object sender, EventArgs e) => AplicarFiltroTipoItem();
-        private void rbSoloLotes_CheckedChanged(object sender, EventArgs e)     => AplicarFiltroTipoItem();
+
+        private void rbSoloLotes_CheckedChanged(object sender, EventArgs e) => AplicarFiltroTipoItem();
 
         private void lstSubastas_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -188,9 +191,9 @@ namespace GUI
                 _subastaActual.OnNotificacionSuscriptor += OnNotificacionSuscriptorSubasta;
                 ActualizarPanelSubasta();
                 CargarSuscriptores(subastaId);
-                btnCerrar.Enabled      = true;
-                btnOferta.Enabled      = true;
-                btnSuscribir.Enabled   = true;
+                btnCerrar.Enabled = true;
+                btnOferta.Enabled = true;
+                btnSuscribir.Enabled = true;
                 btnDesuscribir.Enabled = true;
             }
             catch (Exception ex) { MostrarError("Error al seleccionar subasta", ex); }
@@ -205,10 +208,10 @@ namespace GUI
         private void ActualizarPanelSubasta()
         {
             if (_subastaActual == null) return;
-            lblItemSubasta.Text   = $"Ítem: {_subastaActual.ItemSubastado.Nombre}";
-            lblPrecioActual.Text  = $"${_subastaActual.OfertaActual:N2}";
+            lblItemSubasta.Text = $"Ítem: {_subastaActual.ItemSubastado.Nombre}";
+            lblPrecioActual.Text = $"${_subastaActual.OfertaActual:N2}";
             lblGanadorActual.Text = _subastaActual.PostorGanador?.NombrePostor ?? "Sin ofertas";
-            lblFechaInicio.Text   = $"Inicio: {_subastaActual.FechaInicio:dd/MM/yyyy HH:mm}";
+            lblFechaInicio.Text = $"Inicio: {_subastaActual.FechaInicio:dd/MM/yyyy HH:mm}";
         }
 
         private void CargarSuscriptores(int subastaId)
@@ -220,11 +223,11 @@ namespace GUI
                 dgvSuscriptores.DataSource = suscriptores;
                 if (dgvSuscriptores.Columns.Count > 0)
                 {
-                    dgvSuscriptores.Columns["Id"].Visible              = false;
+                    dgvSuscriptores.Columns["Id"].Visible = false;
                     dgvSuscriptores.Columns["NombrePostor"].HeaderText = "Nombre";
-                    dgvSuscriptores.Columns["NombrePostor"].Width      = 160;
-                    dgvSuscriptores.Columns["Email"].HeaderText        = "Email";
-                    dgvSuscriptores.Columns["Email"].Width             = 180;
+                    dgvSuscriptores.Columns["NombrePostor"].Width = 160;
+                    dgvSuscriptores.Columns["Email"].HeaderText = "Email";
+                    dgvSuscriptores.Columns["Email"].Width = 180;
                     if (dgvSuscriptores.Columns.Contains("Telefono"))
                         dgvSuscriptores.Columns["Telefono"].Visible = false;
                     if (dgvSuscriptores.Columns.Contains("OnNotificacion"))
@@ -309,11 +312,11 @@ namespace GUI
             try
             {
                 _subastaBLL.CerrarSubasta(_subastaActual.Id);
-                btnCerrar.Enabled      = false;
-                btnOferta.Enabled      = false;
-                btnSuscribir.Enabled   = false;
+                btnCerrar.Enabled = false;
+                btnOferta.Enabled = false;
+                btnSuscribir.Enabled = false;
                 btnDesuscribir.Enabled = false;
-                _subastaActual         = null;
+                _subastaActual = null;
                 CargarSubastasActivas();
             }
             catch (Exception ex) { MostrarError("Error al cerrar subasta", ex); }
@@ -328,31 +331,32 @@ namespace GUI
             }
             _log.Add(new EntradaLog
             {
-                Tiempo        = DateTime.Now.ToString("HH:mm:ss"),
-                Mensaje       = mensaje,
-                PostorNombre  = postorNombre,
+                Tiempo = DateTime.Now.ToString("HH:mm:ss"),
+                Mensaje = mensaje,
+                PostorNombre = postorNombre,
                 SubastaNombre = subastaNombre,
-                SubastaId     = _subastaActual?.Id ?? 0
+                SubastaId = _subastaActual?.Id ?? 0
             });
             RenderizarLog();
         }
 
         private void RenderizarLog()
         {
-            string filtroPostor  = cmbFiltroPostor.SelectedIndex  <= 0 ? null : cmbFiltroPostor.SelectedItem?.ToString();
+            string filtroPostor = cmbFiltroPostor.SelectedIndex <= 0 ? null : cmbFiltroPostor.SelectedItem?.ToString();
             string filtroSubasta = cmbFiltroSubasta.SelectedIndex <= 0 ? null : cmbFiltroSubasta.SelectedItem?.ToString();
 
             rtbLog.Clear();
             foreach (var entrada in _log)
             {
-                if (filtroPostor  != null && entrada.PostorNombre  != filtroPostor)  continue;
+                if (filtroPostor != null && entrada.PostorNombre != filtroPostor) continue;
                 if (filtroSubasta != null && entrada.SubastaNombre != filtroSubasta) continue;
                 rtbLog.AppendText($"[{entrada.Tiempo}]  {entrada.Mensaje}{Environment.NewLine}");
             }
             rtbLog.ScrollToCaret();
         }
 
-        private void cmbFiltroPostor_SelectedIndexChanged(object sender, EventArgs e)  => RenderizarLog();
+        private void cmbFiltroPostor_SelectedIndexChanged(object sender, EventArgs e) => RenderizarLog();
+
         private void cmbFiltroSubasta_SelectedIndexChanged(object sender, EventArgs e) => RenderizarLog();
 
         private void btnLimpiarLog_Click(object sender, EventArgs e)
@@ -363,6 +367,7 @@ namespace GUI
 
         private void MostrarAviso(string msg) =>
             MessageBox.Show(msg, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
         private void MostrarError(string ctx, Exception ex) =>
             MessageBox.Show($"{ctx}:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }

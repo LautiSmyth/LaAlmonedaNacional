@@ -37,9 +37,13 @@ namespace GUI
             => lblFechaHora.Text = DateTime.Now.ToString("dd/MM/yyyy  HH:mm:ss");
 
         private void mnuArticulos_Click(object sender, EventArgs e) => AbrirFormHijo<FormArticulo>();
+
         private void mnuLotes_Click(object sender, EventArgs e) => AbrirFormHijo<FormLote>();
+
         private void mnuPostores_Click(object sender, EventArgs e) => AbrirFormHijo<FormPostor>();
+
         private void mnuSubastas_Click(object sender, EventArgs e) => AbrirFormHijo<FormSubasta>();
+
         private void mnuReportes_Click(object sender, EventArgs e) => AbrirFormHijo<FormReporte>();
 
         private void mnuCerrarTodas_Click(object sender, EventArgs e)
@@ -48,6 +52,7 @@ namespace GUI
         }
 
         private void mnuMosaico_Click(object sender, EventArgs e) => LayoutMdi(MdiLayout.TileHorizontal);
+
         private void mnuCascada_Click(object sender, EventArgs e) => LayoutMdi(MdiLayout.Cascade);
 
         private void AbrirFormHijo<T>() where T : Form, new()

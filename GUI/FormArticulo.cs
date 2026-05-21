@@ -32,17 +32,17 @@ namespace GUI
 
         private void ConfigurarLimitesEntrada()
         {
-            txtNombre.MaxLength      = 200;
+            txtNombre.MaxLength = 200;
             txtDescripcion.MaxLength = 500;
-            txtPrecio.MaxLength      = 21;
-            txtPrecio.KeyPress      += txtDecimal_KeyPress;
+            txtPrecio.MaxLength = 21;
+            txtPrecio.KeyPress += txtDecimal_KeyPress;
         }
 
         private void txtDecimal_KeyPress(object sender, KeyPressEventArgs e)
         {
             TextBox tb = (TextBox)sender;
             bool esSeparador = e.KeyChar == ',' || e.KeyChar == '.';
-            bool esDigito    = char.IsDigit(e.KeyChar);
+            bool esDigito = char.IsDigit(e.KeyChar);
             bool esBackspace = e.KeyChar == (char)Keys.Back;
 
             if (!esDigito && !esSeparador && !esBackspace)
@@ -65,15 +65,15 @@ namespace GUI
                 dgvArticulos.DataSource = lista;
                 if (dgvArticulos.Columns.Count > 0)
                 {
-                    dgvArticulos.Columns["Id"].HeaderText         = "ID";
-                    dgvArticulos.Columns["Id"].Width              = 50;
-                    dgvArticulos.Columns["Nombre"].HeaderText     = "Nombre";
-                    dgvArticulos.Columns["Nombre"].Width          = 180;
+                    dgvArticulos.Columns["Id"].HeaderText = "ID";
+                    dgvArticulos.Columns["Id"].Width = 50;
+                    dgvArticulos.Columns["Nombre"].HeaderText = "Nombre";
+                    dgvArticulos.Columns["Nombre"].Width = 180;
                     dgvArticulos.Columns["Descripcion"].HeaderText = "Descripción";
-                    dgvArticulos.Columns["Descripcion"].Width     = 220;
-                    dgvArticulos.Columns["PrecioBase"].HeaderText  = "Precio Base ($)";
-                    dgvArticulos.Columns["PrecioBase"].Width      = 120;
-                    dgvArticulos.Columns["PrecioBase"].DefaultCellStyle.Format    = "N2";
+                    dgvArticulos.Columns["Descripcion"].Width = 220;
+                    dgvArticulos.Columns["PrecioBase"].HeaderText = "Precio Base ($)";
+                    dgvArticulos.Columns["PrecioBase"].Width = 120;
+                    dgvArticulos.Columns["PrecioBase"].DefaultCellStyle.Format = "N2";
                     dgvArticulos.Columns["PrecioBase"].DefaultCellStyle.Alignment =
                         DataGridViewContentAlignment.MiddleRight;
                 }
@@ -89,11 +89,11 @@ namespace GUI
             if (dgvArticulos.CurrentRow?.DataBoundItem is Articulo art)
             {
                 _articuloSeleccionado = art;
-                txtNombre.Text        = art.Nombre;
-                txtDescripcion.Text   = art.Descripcion;
-                txtPrecio.Text        = art.PrecioBase.ToString("N2");
-                btnGuardar.Text       = "Actualizar";
-                btnEliminar.Enabled   = true;
+                txtNombre.Text = art.Nombre;
+                txtDescripcion.Text = art.Descripcion;
+                txtPrecio.Text = art.PrecioBase.ToString("N2");
+                btnGuardar.Text = "Actualizar";
+                btnEliminar.Enabled = true;
             }
         }
 
@@ -106,9 +106,9 @@ namespace GUI
             if (!ValidarCampos()) return;
             try
             {
-                string  nombre      = txtNombre.Text.Trim();
-                string  descripcion = txtDescripcion.Text.Trim();
-                decimal precio      = decimal.Parse(
+                string nombre = txtNombre.Text.Trim();
+                string descripcion = txtDescripcion.Text.Trim();
+                decimal precio = decimal.Parse(
                     txtPrecio.Text.Trim().Replace(",", "."),
                     System.Globalization.CultureInfo.InvariantCulture);
 
@@ -119,9 +119,9 @@ namespace GUI
                 }
                 else
                 {
-                    _articuloSeleccionado.Nombre      = nombre;
+                    _articuloSeleccionado.Nombre = nombre;
                     _articuloSeleccionado.Descripcion = descripcion;
-                    _articuloSeleccionado.PrecioBase  = precio;
+                    _articuloSeleccionado.PrecioBase = precio;
                     _bll.ActualizarArticulo(_articuloSeleccionado);
                     MostrarExito("Artículo actualizado correctamente.");
                 }
@@ -180,22 +180,24 @@ namespace GUI
 
         private void LimpiarFormulario()
         {
-            _actualizando         = true;
+            _actualizando = true;
             _articuloSeleccionado = null;
             txtNombre.Clear();
             txtDescripcion.Clear();
             txtPrecio.Clear();
-            btnGuardar.Text       = "Guardar";
-            btnEliminar.Enabled   = false;
+            btnGuardar.Text = "Guardar";
+            btnEliminar.Enabled = false;
             dgvArticulos.ClearSelection();
             _actualizando = false;
             txtNombre.Focus();
         }
 
         private void MostrarExito(string msg) =>
-            MessageBox.Show(msg, "Éxito",    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(msg, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
         private void MostrarAviso(string msg) =>
             MessageBox.Show(msg, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
         private void MostrarError(string ctx, Exception ex) =>
             MessageBox.Show($"{ctx}:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
