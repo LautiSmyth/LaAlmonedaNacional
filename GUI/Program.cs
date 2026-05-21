@@ -13,6 +13,15 @@ namespace GUI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            Application.ThreadException += (s, e) =>
+                MessageBox.Show($"Error inesperado:\n{e.Exception.Message}",
+                    "Error crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+                MessageBox.Show($"Error fatal:\n{((Exception)e.ExceptionObject).Message}",
+                    "Error crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             Application.Run(new FormMenu());
         }
     }
