@@ -266,8 +266,14 @@ namespace GUI
             if (_subastaActual == null) { MostrarAviso("Seleccione una subasta."); return; }
             if (!(cmbPostorPuja.SelectedItem is Postor postor))
             { MostrarAviso("Seleccione un postor."); return; }
-            if (!decimal.TryParse(txtMontoPuja.Text.Trim(), out decimal monto) || monto <= 0)
-            { MostrarAviso("Ingrese un monto válido mayor a cero."); txtMontoPuja.Focus(); return; }
+
+            string textoMonto = txtMontoPuja.Text.Trim();
+            if (!decimal.TryParse(textoMonto, System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.CurrentCulture, out decimal monto))
+            { MostrarAviso("El monto ingresado no es un número válido."); txtMontoPuja.Focus(); return; }
+            if (monto <= 0)
+            { MostrarAviso("El monto debe ser mayor a cero."); txtMontoPuja.Focus(); return; }
+
             try
             {
                 string subastaNombre = _subastaActual.ItemSubastado.Nombre;

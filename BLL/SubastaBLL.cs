@@ -134,7 +134,20 @@ namespace BLL
                         int udvId = Convert.ToInt32(fila["UnidadVentaId"]);
                         UnidadDeVenta item = _udvDAL.ObtenerPorId(udvId);
                         if (item == null) continue;
+
                         var subasta = new Subasta(id, item);
+
+                        decimal precioActual = Convert.ToDecimal(fila["PrecioActual"]);
+                        int? postorGanadorId = fila["PostorGanadorId"] == DBNull.Value
+                            ? (int?)null
+                            : Convert.ToInt32(fila["PostorGanadorId"]);
+                        if (postorGanadorId.HasValue)
+                        {
+                            Postor ganador = _postorDAL.ObtenerPorId(postorGanadorId.Value);
+                            if (ganador != null)
+                                subasta.AplicarOferta(precioActual, ganador);
+                        }
+
                         _activas[id] = subasta;
                         List<Postor> suscriptores = _postorDAL.ObtenerSuscriptores(id);
                         foreach (var p in suscriptores)
