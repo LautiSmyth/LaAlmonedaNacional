@@ -71,12 +71,6 @@ namespace GUI
             }
         }
 
-        private void btnNuevo_Click(object sender, EventArgs e)
-        {
-            LimpiarFormulario();
-            txtNombre.Focus();
-        }
-
         private void btnLimpiar_Click(object sender, EventArgs e) => LimpiarFormulario();
 
         private void btnGuardar_Click(object sender, EventArgs e)

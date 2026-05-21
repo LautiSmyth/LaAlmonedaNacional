@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace GUI
@@ -166,6 +167,8 @@ namespace GUI
                 }
                 _subastaActual.OnNotificacion -= OnNotificacionSubasta;
                 _subastaActual.OnNotificacion += OnNotificacionSubasta;
+                _subastaActual.OnNotificacionSuscriptor -= OnNotificacionSuscriptorSubasta;
+                _subastaActual.OnNotificacionSuscriptor += OnNotificacionSuscriptorSubasta;
                 ActualizarPanelSubasta();
                 CargarSuscriptores(subastaId);
                 btnCerrar.Enabled = true;
@@ -176,9 +179,10 @@ namespace GUI
             catch (Exception ex) { MostrarError("Error al seleccionar subasta", ex); }
         }
 
-        private void OnNotificacionSubasta(string mensaje)
+        private void OnNotificacionSuscriptorSubasta(IObserver suscriptor, string mensaje)
         {
-            AgregarLog(mensaje, null, _subastaActual?.ItemSubastado?.Nombre);
+            AgregarLog($"[{suscriptor.NombrePostor}] {mensaje}",
+                suscriptor.NombrePostor, _subastaActual?.ItemSubastado?.Nombre);
         }
 
         private void ActualizarPanelSubasta()
@@ -219,6 +223,7 @@ namespace GUI
             try
             {
                 Subasta nueva = _subastaBLL.CrearSubasta(item.Id);
+                nueva.OnNotificacionSuscriptor += OnNotificacionSuscriptorSubasta;
                 AgregarLog($"Subasta #{nueva.Id} creada para '{item.Nombre}' | Base: ${item.ObtenerPrecio():N2}",
                     null, item.Nombre);
                 CargarSubastasActivas();
@@ -232,8 +237,6 @@ namespace GUI
             if (!(cmbPostorSuscribir.SelectedItem is Postor postor)) return;
             try
             {
-                postor.OnNotificacion = (msg) => AgregarLog(msg, postor.NombrePostor,
-                    _subastaActual?.ItemSubastado?.Nombre);
                 _subastaBLL.Suscribir(_subastaActual.Id, postor.Id);
                 CargarSuscriptores(_subastaActual.Id);
                 AgregarLog($"{postor.NombrePostor} suscripto a la subasta.",

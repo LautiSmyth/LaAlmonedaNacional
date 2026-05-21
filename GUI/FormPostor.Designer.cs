@@ -32,7 +32,6 @@ namespace GUI
             this.btnEliminar = new Button();
             this.btnGuardar = new Button();
             this.btnLimpiar = new Button();
-            this.btnNuevo = new Button();
             this.dgvPostores = new DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPostores)).BeginInit();
             this.pnlHeader.SuspendLayout();
@@ -126,7 +125,6 @@ namespace GUI
             this.pnlBotones.Controls.Add(this.btnEliminar);
             this.pnlBotones.Controls.Add(this.btnGuardar);
             this.pnlBotones.Controls.Add(this.btnLimpiar);
-            this.pnlBotones.Controls.Add(this.btnNuevo);
             this.pnlBotones.Dock = DockStyle.Bottom;
             this.pnlBotones.Location = new Point(0, 470);
             this.pnlBotones.Name = "pnlBotones";
@@ -134,26 +132,14 @@ namespace GUI
             this.pnlBotones.Size = new Size(860, 55);
             this.pnlBotones.TabIndex = 2;
 
-            this.btnNuevo.BackColor = Color.FromArgb(30, 20, 10);
-            this.btnNuevo.FlatStyle = FlatStyle.Flat;
-            this.btnNuevo.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            this.btnNuevo.ForeColor = Color.FromArgb(192, 148, 48);
-            this.btnNuevo.Location = new Point(10, 10);
-            this.btnNuevo.Name = "btnNuevo";
-            this.btnNuevo.Size = new Size(100, 35);
-            this.btnNuevo.TabIndex = 0;
-            this.btnNuevo.Text = "Nuevo";
-            this.btnNuevo.UseVisualStyleBackColor = false;
-            this.btnNuevo.Click += new System.EventHandler(this.btnNuevo_Click);
-
             this.btnLimpiar.BackColor = Color.FromArgb(175, 98, 28);
             this.btnLimpiar.FlatStyle = FlatStyle.Flat;
             this.btnLimpiar.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             this.btnLimpiar.ForeColor = Color.White;
-            this.btnLimpiar.Location = new Point(120, 10);
+            this.btnLimpiar.Location = new Point(10, 10);
             this.btnLimpiar.Name = "btnLimpiar";
             this.btnLimpiar.Size = new Size(100, 35);
-            this.btnLimpiar.TabIndex = 1;
+            this.btnLimpiar.TabIndex = 0;
             this.btnLimpiar.Text = "Limpiar";
             this.btnLimpiar.UseVisualStyleBackColor = false;
             this.btnLimpiar.Click += new System.EventHandler(this.btnLimpiar_Click);
@@ -162,7 +148,7 @@ namespace GUI
             this.btnGuardar.FlatStyle = FlatStyle.Flat;
             this.btnGuardar.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             this.btnGuardar.ForeColor = Color.White;
-            this.btnGuardar.Location = new Point(230, 10);
+            this.btnGuardar.Location = new Point(120, 10);
             this.btnGuardar.Name = "btnGuardar";
             this.btnGuardar.Size = new Size(110, 35);
             this.btnGuardar.TabIndex = 2;
@@ -175,7 +161,7 @@ namespace GUI
             this.btnEliminar.FlatStyle = FlatStyle.Flat;
             this.btnEliminar.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             this.btnEliminar.ForeColor = Color.White;
-            this.btnEliminar.Location = new Point(350, 10);
+            this.btnEliminar.Location = new Point(240, 10);
             this.btnEliminar.Name = "btnEliminar";
             this.btnEliminar.Size = new Size(100, 35);
             this.btnEliminar.TabIndex = 3;
@@ -235,7 +221,6 @@ namespace GUI
         private Button btnEliminar;
         private Button btnGuardar;
         private Button btnLimpiar;
-        private Button btnNuevo;
         private DataGridView dgvPostores;
     }
 }
