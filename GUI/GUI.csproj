@@ -46,11 +46,41 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FormArticulo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormArticulo.Designer.cs">
+      <DependentUpon>FormArticulo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormLote.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormLote.Designer.cs">
+      <DependentUpon>FormLote.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormMenu.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormMenu.Designer.cs">
       <DependentUpon>FormMenu.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormPostor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormPostor.Designer.cs">
+      <DependentUpon>FormPostor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormReporte.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormReporte.Designer.cs">
+      <DependentUpon>FormReporte.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormSubasta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormSubasta.Designer.cs">
+      <DependentUpon>FormSubasta.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -75,6 +105,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BE\BE.csproj">
+      <Project>{e7ee9280-5e8d-4e5d-8f44-64c25007e73b}</Project>
+      <Name>BE</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BLL\BLL.csproj">
+      <Project>{d471df14-7247-40e1-9985-f295bb87959d}</Project>
+      <Name>BLL</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
