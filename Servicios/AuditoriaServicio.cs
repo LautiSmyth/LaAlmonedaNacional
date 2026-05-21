@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Servicios
 {
-    public static class AuditoriaService
+    public static class AuditoriaServicio
     {
         private static readonly string _archivoLog =
             Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "auditoria.log");

@@ -17,7 +17,7 @@ namespace BLL
                 throw new ArgumentOutOfRangeException(nameof(precioBase), "El precio base no puede ser negativo.");
             var articulo = new Articulo(nombre, descripcion, precioBase);
             _dal.GuardarArticulo(articulo);
-            AuditoriaService.RegistrarLog($"Artículo creado: '{nombre}' (${precioBase:N2}) → Id={articulo.Id}");
+            AuditoriaServicio.RegistrarLog($"Artículo creado: '{nombre}' (${precioBase:N2}) Id={articulo.Id}");
             return articulo;
         }
 
@@ -28,14 +28,14 @@ namespace BLL
             if (articulo.PrecioBase < 0)
                 throw new ArgumentOutOfRangeException("El precio base no puede ser negativo.");
             _dal.ActualizarArticulo(articulo);
-            AuditoriaService.RegistrarLog($"Artículo actualizado: Id={articulo.Id} '{articulo.Nombre}'");
+            AuditoriaServicio.RegistrarLog($"Artículo actualizado: Id={articulo.Id} '{articulo.Nombre}'");
         }
 
         public void EliminarUnidad(int id)
         {
             if (id <= 0) throw new ArgumentException("Id inválido.");
             _dal.Eliminar(id);
-            AuditoriaService.RegistrarLog($"Unidad de venta eliminada: Id={id}");
+            AuditoriaServicio.RegistrarLog($"Unidad de venta eliminada: Id={id}");
         }
 
         public List<Articulo> ObtenerArticulos() => _dal.ObtenerArticulos();
@@ -45,7 +45,7 @@ namespace BLL
             ValidarNombre(nombre);
             var lote = new Lote(nombre, descripcion);
             _dal.GuardarLote(lote);
-            AuditoriaService.RegistrarLog($"Lote creado: '{nombre}' → Id={lote.Id}");
+            AuditoriaServicio.RegistrarLog($"Lote creado: '{nombre}' Id={lote.Id}");
             return lote;
         }
 
@@ -54,7 +54,7 @@ namespace BLL
             if (lote == null) throw new ArgumentNullException(nameof(lote));
             ValidarNombre(lote.Nombre);
             _dal.ActualizarLote(lote);
-            AuditoriaService.RegistrarLog($"Lote actualizado: Id={lote.Id} '{lote.Nombre}'");
+            AuditoriaServicio.RegistrarLog($"Lote actualizado: Id={lote.Id} '{lote.Nombre}'");
         }
 
         public List<Lote> ObtenerLotes() => _dal.ObtenerLotes();
@@ -69,13 +69,24 @@ namespace BLL
             if (!(padre is Lote))
                 throw new InvalidOperationException("El elemento padre debe ser un Lote.");
             _dal.GuardarRelacionLote(idLotePadre, idComponenteHijo);
-            AuditoriaService.RegistrarLog($"Componente #{idComponenteHijo} agregado al lote #{idLotePadre}");
+            AuditoriaServicio.RegistrarLog($"Componente #{idComponenteHijo} agregado al lote #{idLotePadre}");
         }
 
         public void QuitarComponente(int idLotePadre, int idComponenteHijo)
         {
             _dal.EliminarRelacionLote(idLotePadre, idComponenteHijo);
-            AuditoriaService.RegistrarLog($"Componente #{idComponenteHijo} removido del lote #{idLotePadre}");
+            AuditoriaServicio.RegistrarLog($"Componente #{idComponenteHijo} removido del lote #{idLotePadre}");
+        }
+
+        public int ObtenerLotePadreDeComponente(int componenteId)
+            => _dal.ObtenerLotePadreDeComponente(componenteId);
+
+        public void MoverComponente(int idLotePadreActual, int idLotePadreNuevo, int idComponente)
+        {
+            _dal.EliminarRelacionLote(idLotePadreActual, idComponente);
+            _dal.GuardarRelacionLote(idLotePadreNuevo, idComponente);
+            AuditoriaServicio.RegistrarLog(
+                $"Componente #{idComponente} movido del lote #{idLotePadreActual} al #{idLotePadreNuevo}");
         }
 
         public List<UnidadDeVenta> ObtenerCatalogo() => _dal.ObtenerTodos();

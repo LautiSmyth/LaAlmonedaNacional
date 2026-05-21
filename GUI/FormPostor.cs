@@ -9,17 +9,31 @@ namespace GUI
     {
         private readonly PostorBLL _bll = new PostorBLL();
         private Postor _postorSeleccionado = null;
+        private bool _actualizando = false;
 
         public FormPostor()
         {
             InitializeComponent();
+            AplicarEstilo();
             CargarGrilla();
+        }
+
+        private void AplicarEstilo()
+        {
+            dgvPostores.ColumnHeadersDefaultCellStyle.BackColor = Estilo.Header;
+            dgvPostores.ColumnHeadersDefaultCellStyle.ForeColor = Estilo.Gold;
+            dgvPostores.ColumnHeadersDefaultCellStyle.Font =
+                new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            dgvPostores.AlternatingRowsDefaultCellStyle.BackColor = Estilo.RowAlt;
+            dgvPostores.DefaultCellStyle.SelectionBackColor = Estilo.Gold;
+            dgvPostores.DefaultCellStyle.SelectionForeColor = Estilo.Header;
         }
 
         private void CargarGrilla()
         {
             try
             {
+                _actualizando = true;
                 dgvPostores.DataSource = null;
                 dgvPostores.DataSource = _bll.ObtenerTodos();
                 if (dgvPostores.Columns.Count > 0)
@@ -35,12 +49,15 @@ namespace GUI
                     if (dgvPostores.Columns.Contains("OnNotificacion"))
                         dgvPostores.Columns["OnNotificacion"].Visible = false;
                 }
+                dgvPostores.ClearSelection();
             }
             catch (Exception ex) { MostrarError("Error al cargar postores", ex); }
+            finally { _actualizando = false; }
         }
 
         private void dgvPostores_SelectionChanged(object sender, EventArgs e)
         {
+            if (_actualizando) return;
             if (dgvPostores.CurrentRow?.DataBoundItem is Postor p)
             {
                 _postorSeleccionado = p;
@@ -54,10 +71,11 @@ namespace GUI
 
         private void btnNuevo_Click(object sender, EventArgs e)
         {
-            _postorSeleccionado = null;
             LimpiarFormulario();
             txtNombre.Focus();
         }
+
+        private void btnLimpiar_Click(object sender, EventArgs e) => LimpiarFormulario();
 
         private void btnGuardar_Click(object sender, EventArgs e)
         {
@@ -111,15 +129,21 @@ namespace GUI
 
         private void LimpiarFormulario()
         {
+            _actualizando = true;
             _postorSeleccionado = null;
-            txtNombre.Clear(); txtEmail.Clear(); txtTelefono.Clear();
+            txtNombre.Clear();
+            txtEmail.Clear();
+            txtTelefono.Clear();
             btnGuardar.Text = "Guardar";
             btnEliminar.Enabled = false;
             dgvPostores.ClearSelection();
+            _actualizando = false;
         }
 
-        private void MostrarExito(string msg) => MessageBox.Show(msg, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        private void MostrarAviso(string msg) => MessageBox.Show(msg, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        private void MostrarExito(string msg) =>
+            MessageBox.Show(msg, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        private void MostrarAviso(string msg) =>
+            MessageBox.Show(msg, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         private void MostrarError(string ctx, Exception ex) =>
             MessageBox.Show($"{ctx}:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }

@@ -19,7 +19,7 @@ namespace BLL
                 throw new InvalidOperationException($"Ya existe un postor con el email '{email}'.");
             var postor = new Postor(nombre, email, telefono);
             _dal.RegistrarPostor(postor);
-            AuditoriaService.RegistrarLog($"Postor registrado: '{nombre}' <{email}> Id={postor.Id}");
+            AuditoriaServicio.RegistrarLog($"Postor registrado: '{nombre}' <{email}> Id={postor.Id}");
             return postor;
         }
 
@@ -32,14 +32,14 @@ namespace BLL
             if (existente != null && existente.Id != postor.Id)
                 throw new InvalidOperationException($"El email '{postor.Email}' ya está en uso por otro postor.");
             _dal.ActualizarPostor(postor);
-            AuditoriaService.RegistrarLog($"Postor actualizado: Id={postor.Id}");
+            AuditoriaServicio.RegistrarLog($"Postor actualizado: Id={postor.Id}");
         }
 
         public void EliminarPostor(int id)
         {
             if (id <= 0) throw new ArgumentException("Id inválido.");
             _dal.EliminarPostor(id);
-            AuditoriaService.RegistrarLog($"Postor eliminado: Id={id}");
+            AuditoriaServicio.RegistrarLog($"Postor eliminado: Id={id}");
         }
 
         public Postor ObtenerPorId(int id) => _dal.ObtenerPorId(id);

@@ -21,7 +21,6 @@ namespace DAL
                     new SqlParameter("@Descripcion", articulo.Descripcion)
                 };
                 int nuevoId = _acceso.EscribirYObtenerID(qBase, pBase);
-
                 string qArt = "INSERT INTO Articulos (Id, PrecioBase) VALUES (@Id, @PrecioBase)";
                 SqlParameter[] pArt = {
                     new SqlParameter("@Id",         nuevoId),
@@ -41,16 +40,13 @@ namespace DAL
         {
             try
             {
-                string qBase = @"UPDATE UnidadesDeVenta
-                                 SET Nombre=@Nombre, Descripcion=@Descripcion
-                                 WHERE Id=@Id";
+                string qBase = @"UPDATE UnidadesDeVenta SET Nombre=@Nombre, Descripcion=@Descripcion WHERE Id=@Id";
                 SqlParameter[] pBase = {
                     new SqlParameter("@Nombre",      articulo.Nombre),
                     new SqlParameter("@Descripcion", articulo.Descripcion),
                     new SqlParameter("@Id",          articulo.Id)
                 };
                 _acceso.Escribir(qBase, pBase);
-
                 string qArt = "UPDATE Articulos SET PrecioBase=@PrecioBase WHERE Id=@Id";
                 SqlParameter[] pArt = {
                     new SqlParameter("@PrecioBase", articulo.PrecioBase),
@@ -88,9 +84,7 @@ namespace DAL
         {
             try
             {
-                string q = @"UPDATE UnidadesDeVenta
-                             SET Nombre=@Nombre, Descripcion=@Descripcion
-                             WHERE Id=@Id";
+                string q = @"UPDATE UnidadesDeVenta SET Nombre=@Nombre, Descripcion=@Descripcion WHERE Id=@Id";
                 SqlParameter[] p = {
                     new SqlParameter("@Nombre",      lote.Nombre),
                     new SqlParameter("@Descripcion", lote.Descripcion),
@@ -108,17 +102,14 @@ namespace DAL
         {
             try
             {
-                string qCheck = @"SELECT COUNT(1) FROM Lote_Contenido
-                                  WHERE IdLotePadre=@P AND IdComponenteHijo=@H";
+                string qCheck = @"SELECT COUNT(1) FROM Lote_Contenido WHERE IdLotePadre=@P AND IdComponenteHijo=@H";
                 DataTable check = _acceso.Leer(qCheck, new[] {
                     new SqlParameter("@P", idLotePadre),
                     new SqlParameter("@H", idComponenteHijo)
                 });
                 if (Convert.ToInt32(check.Rows[0][0]) > 0)
                     throw new InvalidOperationException("El componente ya pertenece a este lote.");
-
-                string q = @"INSERT INTO Lote_Contenido (IdLotePadre, IdComponenteHijo)
-                             VALUES (@IdLotePadre, @IdComponenteHijo)";
+                string q = @"INSERT INTO Lote_Contenido (IdLotePadre, IdComponenteHijo) VALUES (@IdLotePadre, @IdComponenteHijo)";
                 SqlParameter[] p = {
                     new SqlParameter("@IdLotePadre",      idLotePadre),
                     new SqlParameter("@IdComponenteHijo", idComponenteHijo)
@@ -135,8 +126,7 @@ namespace DAL
         {
             try
             {
-                string q = @"DELETE FROM Lote_Contenido
-                             WHERE IdLotePadre=@P AND IdComponenteHijo=@H";
+                string q = @"DELETE FROM Lote_Contenido WHERE IdLotePadre=@P AND IdComponenteHijo=@H";
                 _acceso.Escribir(q, new[] {
                     new SqlParameter("@P", idLotePadre),
                     new SqlParameter("@H", idComponenteHijo)
@@ -161,6 +151,21 @@ namespace DAL
             }
         }
 
+        public int ObtenerLotePadreDeComponente(int componenteId)
+        {
+            try
+            {
+                string q = "SELECT TOP 1 IdLotePadre FROM Lote_Contenido WHERE IdComponenteHijo=@Id";
+                DataTable t = _acceso.Leer(q, new[] { new SqlParameter("@Id", componenteId) });
+                if (t.Rows.Count == 0) return 0;
+                return Convert.ToInt32(t.Rows[0]["IdLotePadre"]);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al buscar lote padre: {ex.Message}", ex);
+            }
+        }
+
         public UnidadDeVenta ObtenerPorId(int id)
         {
             try
@@ -180,9 +185,7 @@ namespace DAL
         {
             try
             {
-                string q = @"SELECT Id, Nombre, Descripcion, Tipo
-                             FROM UnidadesDeVenta
-                             ORDER BY Tipo, Nombre";
+                string q = @"SELECT Id, Nombre, Descripcion, Tipo FROM UnidadesDeVenta ORDER BY Tipo, Nombre";
                 DataTable tabla = _acceso.Leer(q);
                 var lista = new List<UnidadDeVenta>();
                 foreach (DataRow fila in tabla.Rows)
@@ -200,17 +203,13 @@ namespace DAL
             try
             {
                 string q = @"SELECT u.Id, u.Nombre, u.Descripcion, a.PrecioBase
-                             FROM UnidadesDeVenta u
-                             JOIN Articulos a ON u.Id = a.Id
-                             ORDER BY u.Nombre";
+                             FROM UnidadesDeVenta u JOIN Articulos a ON u.Id = a.Id ORDER BY u.Nombre";
                 DataTable tabla = _acceso.Leer(q);
                 var lista = new List<Articulo>();
                 foreach (DataRow fila in tabla.Rows)
                     lista.Add(new Articulo(
-                        Convert.ToInt32(fila["Id"]),
-                        fila["Nombre"].ToString(),
-                        fila["Descripcion"].ToString(),
-                        Convert.ToDecimal(fila["PrecioBase"])));
+                        Convert.ToInt32(fila["Id"]), fila["Nombre"].ToString(),
+                        fila["Descripcion"].ToString(), Convert.ToDecimal(fila["PrecioBase"])));
                 return lista;
             }
             catch (Exception ex)
@@ -223,15 +222,12 @@ namespace DAL
         {
             try
             {
-                string q = @"SELECT Id, Nombre, Descripcion
-                             FROM UnidadesDeVenta WHERE Tipo='Lote' ORDER BY Nombre";
+                string q = "SELECT Id, Nombre, Descripcion FROM UnidadesDeVenta WHERE Tipo='Lote' ORDER BY Nombre";
                 DataTable tabla = _acceso.Leer(q);
                 var lista = new List<Lote>();
                 foreach (DataRow fila in tabla.Rows)
-                    lista.Add(new Lote(
-                        Convert.ToInt32(fila["Id"]),
-                        fila["Nombre"].ToString(),
-                        fila["Descripcion"].ToString()));
+                    lista.Add(new Lote(Convert.ToInt32(fila["Id"]),
+                        fila["Nombre"].ToString(), fila["Descripcion"].ToString()));
                 return lista;
             }
             catch (Exception ex)
@@ -246,15 +242,11 @@ namespace DAL
             string nombre = fila["Nombre"].ToString();
             string descripcion = fila["Descripcion"].ToString();
             string tipo = fila["Tipo"].ToString();
-
             if (tipo == "Articulo")
             {
-                DataTable pTabla = _acceso.Leer(
-                    "SELECT PrecioBase FROM Articulos WHERE Id=@Id",
+                DataTable pTabla = _acceso.Leer("SELECT PrecioBase FROM Articulos WHERE Id=@Id",
                     new[] { new SqlParameter("@Id", id) });
-                decimal precio = pTabla.Rows.Count > 0
-                    ? Convert.ToDecimal(pTabla.Rows[0]["PrecioBase"])
-                    : 0;
+                decimal precio = pTabla.Rows.Count > 0 ? Convert.ToDecimal(pTabla.Rows[0]["PrecioBase"]) : 0;
                 return new Articulo(id, nombre, descripcion, precio);
             }
             else

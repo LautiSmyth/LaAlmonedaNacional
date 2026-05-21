@@ -9,10 +9,7 @@ namespace GUI
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
+            if (disposing && (components != null)) components.Dispose();
             base.Dispose(disposing);
         }
 
@@ -41,7 +38,7 @@ namespace GUI
             this.pnlBotones.SuspendLayout();
             this.SuspendLayout();
 
-            this.pnlHeader.BackColor = Color.FromArgb(26, 58, 92);
+            this.pnlHeader.BackColor = Color.FromArgb(30, 20, 10);
             this.pnlHeader.Controls.Add(this.lblTitulo);
             this.pnlHeader.Dock = DockStyle.Top;
             this.pnlHeader.Location = new Point(0, 0);
@@ -51,16 +48,16 @@ namespace GUI
 
             this.lblTitulo.Dock = DockStyle.Fill;
             this.lblTitulo.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-            this.lblTitulo.ForeColor = Color.White;
+            this.lblTitulo.ForeColor = Color.FromArgb(192, 148, 48);
             this.lblTitulo.Location = new Point(0, 0);
             this.lblTitulo.Name = "lblTitulo";
-            this.lblTitulo.Padding = new Padding(10, 0, 0, 0);
+            this.lblTitulo.Padding = new Padding(12, 0, 0, 0);
             this.lblTitulo.Size = new Size(1000, 50);
             this.lblTitulo.TabIndex = 0;
-            this.lblTitulo.Text = "Reporte de Jornada (RF-13)";
+            this.lblTitulo.Text = "Reporte de Jornada";
             this.lblTitulo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 
-            this.pnlBotones.BackColor = Color.FromArgb(240, 244, 248);
+            this.pnlBotones.BackColor = Color.FromArgb(250, 245, 235);
             this.pnlBotones.Controls.Add(this.btnExportar);
             this.pnlBotones.Controls.Add(this.btnActualizar);
             this.pnlBotones.Controls.Add(this.lblTotalJornada);
@@ -72,17 +69,17 @@ namespace GUI
             this.pnlBotones.TabIndex = 1;
 
             this.lblTotalJornada.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            this.lblTotalJornada.ForeColor = Color.FromArgb(212, 175, 55);
+            this.lblTotalJornada.ForeColor = Color.FromArgb(192, 148, 48);
             this.lblTotalJornada.Location = new Point(10, 15);
             this.lblTotalJornada.Name = "lblTotalJornada";
             this.lblTotalJornada.Size = new Size(380, 26);
             this.lblTotalJornada.TabIndex = 0;
             this.lblTotalJornada.Text = "Total recaudado: —";
 
-            this.btnActualizar.BackColor = Color.FromArgb(26, 58, 92);
+            this.btnActualizar.BackColor = Color.FromArgb(30, 20, 10);
             this.btnActualizar.FlatStyle = FlatStyle.Flat;
             this.btnActualizar.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            this.btnActualizar.ForeColor = Color.White;
+            this.btnActualizar.ForeColor = Color.FromArgb(192, 148, 48);
             this.btnActualizar.Location = new Point(400, 10);
             this.btnActualizar.Name = "btnActualizar";
             this.btnActualizar.Size = new Size(130, 35);
@@ -91,7 +88,7 @@ namespace GUI
             this.btnActualizar.UseVisualStyleBackColor = false;
             this.btnActualizar.Click += new System.EventHandler(this.btnActualizar_Click);
 
-            this.btnExportar.BackColor = Color.FromArgb(40, 167, 69);
+            this.btnExportar.BackColor = Color.FromArgb(38, 100, 55);
             this.btnExportar.FlatStyle = FlatStyle.Flat;
             this.btnExportar.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             this.btnExportar.ForeColor = Color.White;
@@ -118,7 +115,7 @@ namespace GUI
             this.splitMain.Panel1.Padding = new Padding(8);
 
             this.lblCatalogo.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            this.lblCatalogo.ForeColor = Color.FromArgb(26, 58, 92);
+            this.lblCatalogo.ForeColor = Color.FromArgb(30, 20, 10);
             this.lblCatalogo.Location = new Point(8, 8);
             this.lblCatalogo.Name = "lblCatalogo";
             this.lblCatalogo.Size = new Size(316, 20);
@@ -133,13 +130,13 @@ namespace GUI
             this.trvCatalogo.Size = new Size(316, 435);
             this.trvCatalogo.TabIndex = 1;
 
-            this.splitMain.Panel2.BackColor = Color.FromArgb(248, 250, 252);
+            this.splitMain.Panel2.BackColor = Color.FromArgb(250, 245, 235);
             this.splitMain.Panel2.Controls.Add(this.dgvHistorial);
             this.splitMain.Panel2.Controls.Add(this.lblHistorial);
             this.splitMain.Panel2.Padding = new Padding(8);
 
             this.lblHistorial.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            this.lblHistorial.ForeColor = Color.FromArgb(26, 58, 92);
+            this.lblHistorial.ForeColor = Color.FromArgb(30, 20, 10);
             this.lblHistorial.Location = new Point(8, 8);
             this.lblHistorial.Name = "lblHistorial";
             this.lblHistorial.Size = new Size(640, 20);
@@ -163,6 +160,7 @@ namespace GUI
 
             this.AutoScaleDimensions = new SizeF(7F, 15F);
             this.AutoScaleMode = AutoScaleMode.Font;
+            this.BackColor = Color.FromArgb(250, 245, 235);
             this.ClientSize = new Size(1000, 585);
             this.Controls.Add(this.splitMain);
             this.Controls.Add(this.pnlBotones);

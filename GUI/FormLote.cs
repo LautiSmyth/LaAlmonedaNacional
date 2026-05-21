@@ -14,8 +14,15 @@ namespace GUI
         public FormLote()
         {
             InitializeComponent();
+            AplicarEstilo();
             CargarLotes();
             CargarComponentesDisponibles();
+        }
+
+        private void AplicarEstilo()
+        {
+            trvLote.BackColor = Color.White;
+            trvLote.BorderStyle = BorderStyle.FixedSingle;
         }
 
         private void CargarLotes()
@@ -33,9 +40,12 @@ namespace GUI
         {
             try
             {
+                var catalogo = _bll.ObtenerCatalogo();
                 cmbComponentes.DataSource = null;
-                cmbComponentes.DataSource = _bll.ObtenerCatalogo();
+                cmbComponentes.DataSource = catalogo;
                 cmbComponentes.DisplayMember = "Nombre";
+                cmbComponentes.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                cmbComponentes.AutoCompleteSource = AutoCompleteSource.ListItems;
             }
             catch (Exception ex) { MostrarError("Error al cargar catálogo", ex); }
         }
@@ -51,6 +61,12 @@ namespace GUI
                 btnEliminarLote.Enabled = true;
                 RefrescarArbolLote(lote.Id);
             }
+        }
+
+        private void txtNombreLote_Enter(object sender, EventArgs e)
+        {
+            if (_loteSeleccionado == null && string.IsNullOrWhiteSpace(txtNombreLote.Text))
+                txtNombreLote.Text = "[Lote] ";
         }
 
         private void RefrescarArbolLote(int loteId)
@@ -74,20 +90,20 @@ namespace GUI
             if (udv is Lote lote)
             {
                 var nodo = new TreeNode($"[Lote] {lote.Nombre}  (${lote.ObtenerPrecio():N2})")
-                { Tag = lote, ForeColor = Color.FromArgb(26, 58, 92) };
+                { Tag = lote, ForeColor = Estilo.Header };
                 foreach (var comp in lote.ObtenerComponentes())
                     nodo.Nodes.Add(CrearNodoArbol(comp));
                 return nodo;
             }
             if (udv is Articulo art)
                 return new TreeNode($"[Artículo] {art.Nombre}  (${art.PrecioBase:N2})")
-                { Tag = art, ForeColor = Color.DarkGreen };
+                { Tag = art, ForeColor = Estilo.BtnSuccess };
             return new TreeNode(udv.Nombre);
         }
 
         private void btnCrearLote_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtNombreLote.Text))
+            if (string.IsNullOrWhiteSpace(txtNombreLote.Text) || txtNombreLote.Text.Trim() == "[Lote]")
             { MostrarAviso("El nombre del lote es obligatorio."); txtNombreLote.Focus(); return; }
             try
             {
@@ -136,16 +152,42 @@ namespace GUI
         {
             if (_loteSeleccionado == null)
             { MostrarAviso("Primero seleccione un lote de la lista."); return; }
-            if (cmbComponentes.SelectedItem is UnidadDeVenta udv)
+            if (!(cmbComponentes.SelectedItem is UnidadDeVenta udv)) return;
+            if (udv.Id == _loteSeleccionado.Id)
+            { MostrarAviso("Un lote no puede contenerse a sí mismo."); return; }
+
+            try
             {
-                try
+                int lotePadreActual = _bll.ObtenerLotePadreDeComponente(udv.Id);
+
+                if (lotePadreActual == _loteSeleccionado.Id)
+                { MostrarAviso($"'{udv.Nombre}' ya pertenece a este lote."); return; }
+
+                if (lotePadreActual != 0)
+                {
+                    UnidadDeVenta loteActual = _bll.ObtenerPorId(lotePadreActual);
+                    string nombreLoteActual = loteActual?.Nombre ?? $"#{lotePadreActual}";
+
+                    var respuesta = MessageBox.Show(
+                        $"'{udv.Nombre}' ya pertenece al lote '{nombreLoteActual}'.\n\n" +
+                        $"¿Deseas moverlo a '{_loteSeleccionado.Nombre}'?",
+                        "Componente ya asignado",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    if (respuesta != DialogResult.Yes) return;
+
+                    _bll.MoverComponente(lotePadreActual, _loteSeleccionado.Id, udv.Id);
+                    RefrescarArbolLote(_loteSeleccionado.Id);
+                    MostrarExito($"'{udv.Nombre}' movido correctamente a '{_loteSeleccionado.Nombre}'.");
+                }
+                else
                 {
                     _bll.AgregarComponente(_loteSeleccionado.Id, udv.Id);
                     RefrescarArbolLote(_loteSeleccionado.Id);
                     MostrarExito($"'{udv.Nombre}' agregado al lote.");
                 }
-                catch (Exception ex) { MostrarError("Error al agregar componente", ex); }
             }
+            catch (Exception ex) { MostrarError("Error al agregar componente", ex); }
         }
 
         private void btnQuitarComp_Click(object sender, EventArgs e)
@@ -174,8 +216,10 @@ namespace GUI
             lstLotes.ClearSelected();
         }
 
-        private void MostrarExito(string msg) => MessageBox.Show(msg, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        private void MostrarAviso(string msg) => MessageBox.Show(msg, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        private void MostrarExito(string msg) =>
+            MessageBox.Show(msg, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        private void MostrarAviso(string msg) =>
+            MessageBox.Show(msg, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         private void MostrarError(string ctx, Exception ex) =>
             MessageBox.Show($"{ctx}:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }

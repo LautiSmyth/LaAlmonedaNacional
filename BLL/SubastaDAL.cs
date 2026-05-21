@@ -33,7 +33,7 @@ namespace BLL
             var subasta = new Subasta(nuevoId, item);
             lock (_lockPuja)
                 _activas[nuevoId] = subasta;
-            AuditoriaService.RegistrarLog($"Subasta #{nuevoId} creada: '{item.Nombre}' (Base: ${item.ObtenerPrecio():N2})");
+            AuditoriaServicio.RegistrarLog($"Subasta #{nuevoId} creada: '{item.Nombre}' (Base: ${item.ObtenerPrecio():N2})");
             return subasta;
         }
 
@@ -46,7 +46,7 @@ namespace BLL
                 throw new InvalidOperationException($"{postor.NombrePostor} ya está suscripto a esta subasta.");
             subasta.Suscribir(postor);
             _suscripcionDAL.Suscribir(subastaId, postorId);
-            AuditoriaService.RegistrarLog($"Postor '{postor.NombrePostor}' suscripto a subasta #{subastaId}");
+            AuditoriaServicio.RegistrarLog($"Postor '{postor.NombrePostor}' suscripto a subasta #{subastaId}");
         }
 
         public void Desuscribir(int subastaId, int postorId)
@@ -56,7 +56,7 @@ namespace BLL
                 ?? throw new InvalidOperationException($"No existe el postor #{postorId}.");
             subasta.Desuscribir(postor);
             _suscripcionDAL.Desuscribir(subastaId, postorId);
-            AuditoriaService.RegistrarLog($"Postor '{postor.NombrePostor}' desuscripto de subasta #{subastaId}");
+            AuditoriaServicio.RegistrarLog($"Postor '{postor.NombrePostor}' desuscripto de subasta #{subastaId}");
         }
 
         public void RealizarOferta(int subastaId, int postorId, decimal monto, Action<string> notificacionGui = null)
@@ -74,7 +74,7 @@ namespace BLL
                 subasta.AplicarOferta(monto, postor);
                 string msg = $"Nueva oferta: ${monto:N2} por {postor.NombrePostor} en '{subasta.ItemSubastado.Nombre}'";
                 subasta.NotificarSuscriptores(msg);
-                AuditoriaService.RegistrarLog($"Oferta: Subasta #{subastaId} | {postor.NombrePostor} → ${monto:N2}");
+                AuditoriaServicio.RegistrarLog($"Oferta: Subasta #{subastaId} | {postor.NombrePostor} → ${monto:N2}");
             }
         }
 
@@ -103,7 +103,7 @@ namespace BLL
                     msg = $"Subasta '{subasta.ItemSubastado.Nombre}' cerrada sin postores.";
                 }
                 subasta.NotificarSuscriptores(msg);
-                AuditoriaService.RegistrarLog($"Subasta #{subastaId} cerrada. " + msg);
+                AuditoriaServicio.RegistrarLog($"Subasta #{subastaId} cerrada. " + msg);
                 _activas.Remove(subastaId);
             }
         }
@@ -144,7 +144,7 @@ namespace BLL
             }
             catch (Exception ex)
             {
-                AuditoriaService.RegistrarLog($"[ERROR] CargarSubastasActivas: {ex.Message}");
+                AuditoriaServicio.RegistrarLog($"[ERROR] CargarSubastasActivas: {ex.Message}");
             }
         }
 

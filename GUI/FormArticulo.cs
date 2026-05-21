@@ -9,17 +9,31 @@ namespace GUI
     {
         private readonly UnidadDeVentaBLL _bll = new UnidadDeVentaBLL();
         private Articulo _articuloSeleccionado = null;
+        private bool _actualizando = false;
 
         public FormArticulo()
         {
             InitializeComponent();
+            AplicarEstilo();
             CargarGrilla();
+        }
+
+        private void AplicarEstilo()
+        {
+            dgvArticulos.ColumnHeadersDefaultCellStyle.BackColor = Estilo.Header;
+            dgvArticulos.ColumnHeadersDefaultCellStyle.ForeColor = Estilo.Gold;
+            dgvArticulos.ColumnHeadersDefaultCellStyle.Font =
+                new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            dgvArticulos.AlternatingRowsDefaultCellStyle.BackColor = Estilo.RowAlt;
+            dgvArticulos.DefaultCellStyle.SelectionBackColor = Estilo.Gold;
+            dgvArticulos.DefaultCellStyle.SelectionForeColor = Estilo.Header;
         }
 
         private void CargarGrilla()
         {
             try
             {
+                _actualizando = true;
                 dgvArticulos.DataSource = null;
                 var lista = _bll.ObtenerArticulos();
                 dgvArticulos.DataSource = lista;
@@ -34,14 +48,18 @@ namespace GUI
                     dgvArticulos.Columns["PrecioBase"].HeaderText = "Precio Base ($)";
                     dgvArticulos.Columns["PrecioBase"].Width = 120;
                     dgvArticulos.Columns["PrecioBase"].DefaultCellStyle.Format = "N2";
-                    dgvArticulos.Columns["PrecioBase"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                    dgvArticulos.Columns["PrecioBase"].DefaultCellStyle.Alignment =
+                        DataGridViewContentAlignment.MiddleRight;
                 }
+                dgvArticulos.ClearSelection();
             }
             catch (Exception ex) { MostrarError("Error al cargar artículos", ex); }
+            finally { _actualizando = false; }
         }
 
         private void dgvArticulos_SelectionChanged(object sender, EventArgs e)
         {
+            if (_actualizando) return;
             if (dgvArticulos.CurrentRow?.DataBoundItem is Articulo art)
             {
                 _articuloSeleccionado = art;
@@ -55,10 +73,11 @@ namespace GUI
 
         private void btnNuevo_Click(object sender, EventArgs e)
         {
-            _articuloSeleccionado = null;
             LimpiarFormulario();
             txtNombre.Focus();
         }
+
+        private void btnLimpiar_Click(object sender, EventArgs e) => LimpiarFormulario();
 
         private void btnGuardar_Click(object sender, EventArgs e)
         {
@@ -109,12 +128,15 @@ namespace GUI
             {
                 string filtro = txtBuscar.Text.Trim().ToLower();
                 if (string.IsNullOrEmpty(filtro)) { CargarGrilla(); return; }
+                _actualizando = true;
                 var todos = _bll.ObtenerArticulos();
                 dgvArticulos.DataSource = todos.FindAll(a =>
                     a.Nombre.ToLower().Contains(filtro) ||
                     a.Descripcion.ToLower().Contains(filtro));
+                dgvArticulos.ClearSelection();
             }
             catch { }
+            finally { _actualizando = false; }
         }
 
         private bool ValidarCampos()
@@ -128,6 +150,7 @@ namespace GUI
 
         private void LimpiarFormulario()
         {
+            _actualizando = true;
             _articuloSeleccionado = null;
             txtNombre.Clear();
             txtDescripcion.Clear();
@@ -135,10 +158,14 @@ namespace GUI
             btnGuardar.Text = "Guardar";
             btnEliminar.Enabled = false;
             dgvArticulos.ClearSelection();
+            _actualizando = false;
+            txtNombre.Focus();
         }
 
-        private void MostrarExito(string msg) => MessageBox.Show(msg, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        private void MostrarAviso(string msg) => MessageBox.Show(msg, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        private void MostrarExito(string msg) =>
+            MessageBox.Show(msg, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        private void MostrarAviso(string msg) =>
+            MessageBox.Show(msg, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         private void MostrarError(string ctx, Exception ex) =>
             MessageBox.Show($"{ctx}:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }

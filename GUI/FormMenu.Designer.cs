@@ -9,10 +9,7 @@ namespace GUI
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
+            if (disposing && (components != null)) components.Dispose();
             base.Dispose(disposing);
         }
 
@@ -44,26 +41,21 @@ namespace GUI
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
 
-            this.menuStrip.BackColor = Color.FromArgb(26, 58, 92);
+            this.menuStrip.BackColor = Color.FromArgb(30, 20, 10);
             this.menuStrip.Font = new Font("Segoe UI", 10F);
             this.menuStrip.Items.AddRange(new ToolStripItem[] {
-                this.mnuInventario,
-                this.mnuPostoresMenu,
-                this.mnuSubastasMenu,
-                this.mnuReportesMenu,
-                this.mnuVentana});
+                this.mnuInventario, this.mnuPostoresMenu,
+                this.mnuSubastasMenu, this.mnuReportesMenu, this.mnuVentana});
             this.menuStrip.Location = new Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Padding = new Padding(5, 3, 0, 3);
-            this.menuStrip.Size = new Size(1200, 30);
+            this.menuStrip.Size = new Size(1200, 32);
             this.menuStrip.TabIndex = 0;
 
-            this.mnuInventario.DropDownItems.AddRange(new ToolStripItem[] {
-                this.mnuArticulos,
-                this.mnuLotes});
-            this.mnuInventario.ForeColor = Color.White;
+            this.mnuInventario.ForeColor = Color.FromArgb(192, 148, 48);
             this.mnuInventario.Name = "mnuInventario";
             this.mnuInventario.Text = "Inventario";
+            this.mnuInventario.DropDownItems.AddRange(new ToolStripItem[] { this.mnuArticulos, this.mnuLotes });
 
             this.mnuArticulos.Name = "mnuArticulos";
             this.mnuArticulos.Text = "Artículos";
@@ -73,44 +65,39 @@ namespace GUI
             this.mnuLotes.Text = "Lotes";
             this.mnuLotes.Click += new System.EventHandler(this.mnuLotes_Click);
 
-            this.mnuPostoresMenu.DropDownItems.AddRange(new ToolStripItem[] {
-                this.mnuPostores});
-            this.mnuPostoresMenu.ForeColor = Color.White;
+            this.mnuPostoresMenu.ForeColor = Color.FromArgb(192, 148, 48);
             this.mnuPostoresMenu.Name = "mnuPostoresMenu";
             this.mnuPostoresMenu.Text = "Postores";
+            this.mnuPostoresMenu.DropDownItems.Add(this.mnuPostores);
 
             this.mnuPostores.Name = "mnuPostores";
             this.mnuPostores.Text = "Gestionar Postores";
             this.mnuPostores.Click += new System.EventHandler(this.mnuPostores_Click);
 
-            this.mnuSubastasMenu.DropDownItems.AddRange(new ToolStripItem[] {
-                this.mnuSubastas});
-            this.mnuSubastasMenu.ForeColor = Color.White;
+            this.mnuSubastasMenu.ForeColor = Color.FromArgb(192, 148, 48);
             this.mnuSubastasMenu.Name = "mnuSubastasMenu";
             this.mnuSubastasMenu.Text = "Subastas";
+            this.mnuSubastasMenu.DropDownItems.Add(this.mnuSubastas);
 
             this.mnuSubastas.Name = "mnuSubastas";
             this.mnuSubastas.Text = "Gestionar Subastas";
             this.mnuSubastas.Click += new System.EventHandler(this.mnuSubastas_Click);
 
-            this.mnuReportesMenu.DropDownItems.AddRange(new ToolStripItem[] {
-                this.mnuReportes});
-            this.mnuReportesMenu.ForeColor = Color.White;
+            this.mnuReportesMenu.ForeColor = Color.FromArgb(192, 148, 48);
             this.mnuReportesMenu.Name = "mnuReportesMenu";
             this.mnuReportesMenu.Text = "Reportes";
+            this.mnuReportesMenu.DropDownItems.Add(this.mnuReportes);
 
             this.mnuReportes.Name = "mnuReportes";
             this.mnuReportes.Text = "Reporte de Jornada";
             this.mnuReportes.Click += new System.EventHandler(this.mnuReportes_Click);
 
-            this.mnuVentana.DropDownItems.AddRange(new ToolStripItem[] {
-                this.mnuMosaico,
-                this.mnuCascada,
-                new ToolStripSeparator(),
-                this.mnuCerrarTodas});
-            this.mnuVentana.ForeColor = Color.White;
+            this.mnuVentana.ForeColor = Color.FromArgb(192, 148, 48);
             this.mnuVentana.Name = "mnuVentana";
             this.mnuVentana.Text = "Ventana";
+            this.mnuVentana.DropDownItems.AddRange(new ToolStripItem[] {
+                this.mnuMosaico, this.mnuCascada,
+                new ToolStripSeparator(), this.mnuCerrarTodas });
 
             this.mnuMosaico.Name = "mnuMosaico";
             this.mnuMosaico.Text = "Mosaico";
@@ -124,17 +111,15 @@ namespace GUI
             this.mnuCerrarTodas.Text = "Cerrar todas";
             this.mnuCerrarTodas.Click += new System.EventHandler(this.mnuCerrarTodas_Click);
 
-            this.statusStrip.BackColor = Color.FromArgb(26, 58, 92);
+            this.statusStrip.BackColor = Color.FromArgb(30, 20, 10);
             this.statusStrip.Items.AddRange(new ToolStripItem[] {
-                this.lblEstadoConexion,
-                this.lblSeparador,
-                this.lblFechaHora});
+                this.lblEstadoConexion, this.lblSeparador, this.lblFechaHora });
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new Size(1200, 22);
+            this.statusStrip.Size = new Size(1200, 24);
             this.statusStrip.TabIndex = 1;
 
             this.lblEstadoConexion.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            this.lblEstadoConexion.ForeColor = Color.Yellow;
+            this.lblEstadoConexion.ForeColor = Color.FromArgb(192, 148, 48);
             this.lblEstadoConexion.Name = "lblEstadoConexion";
             this.lblEstadoConexion.Text = "● Verificando...";
 
@@ -143,7 +128,7 @@ namespace GUI
             this.lblSeparador.Text = "";
 
             this.lblFechaHora.Font = new Font("Segoe UI", 9F);
-            this.lblFechaHora.ForeColor = Color.White;
+            this.lblFechaHora.ForeColor = Color.FromArgb(245, 240, 228);
             this.lblFechaHora.Name = "lblFechaHora";
             this.lblFechaHora.Text = "00/00/0000  00:00:00";
 
@@ -153,7 +138,7 @@ namespace GUI
 
             this.AutoScaleDimensions = new SizeF(7F, 15F);
             this.AutoScaleMode = AutoScaleMode.Font;
-            this.BackColor = Color.FromArgb(240, 244, 248);
+            this.BackColor = Color.FromArgb(250, 245, 235);
             this.ClientSize = new Size(1200, 750);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.menuStrip);
