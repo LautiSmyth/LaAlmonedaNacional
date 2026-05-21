@@ -89,6 +89,21 @@ namespace BLL
                 $"Componente #{idComponente} movido del lote #{idLotePadreActual} al #{idLotePadreNuevo}");
         }
 
+        public void EliminarLoteConContenido(int idLote)
+        {
+            if (idLote <= 0) throw new ArgumentException("Id inválido.");
+            _dal.EliminarRecursivo(idLote);
+            AuditoriaServicio.RegistrarLog($"Lote #{idLote} eliminado con todo su contenido (composición)");
+        }
+
+        public void EliminarLoteSinContenido(int idLote)
+        {
+            if (idLote <= 0) throw new ArgumentException("Id inválido.");
+            _dal.DesvinculrComponentes(idLote);
+            _dal.Eliminar(idLote);
+            AuditoriaServicio.RegistrarLog($"Lote #{idLote} eliminado; componentes desvinculados y conservados en inventario");
+        }
+
         public List<UnidadDeVenta> ObtenerCatalogo() => _dal.ObtenerTodos();
 
         public UnidadDeVenta ObtenerPorId(int id) => _dal.ObtenerPorId(id);

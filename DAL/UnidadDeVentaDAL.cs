@@ -150,6 +150,41 @@ namespace DAL
                 throw new Exception($"Error al eliminar unidad #{id}: {ex.Message}", ex);
             }
         }
+        public void DesvinculrComponentes(int idLote)
+        {
+            try
+            {
+                _acceso.Escribir("DELETE FROM Lote_Contenido WHERE IdLotePadre=@Id",
+                    new[] { new SqlParameter("@Id", idLote) });
+            }
+            catch (Exception ex) { throw new Exception($"Error al desvincular componentes del lote #{idLote}: {ex.Message}", ex); }
+        }
+
+        public void EliminarRecursivo(int id)
+        {
+            try
+            {
+                DataTable tipoTabla = _acceso.Leer("SELECT Tipo FROM UnidadesDeVenta WHERE Id=@Id",
+                    new[] { new SqlParameter("@Id", id) });
+                if (tipoTabla.Rows.Count == 0) return;
+
+                if (tipoTabla.Rows[0]["Tipo"].ToString() == "Lote")
+                {
+                    DataTable hijos = _acceso.Leer("SELECT IdComponenteHijo FROM Lote_Contenido WHERE IdLotePadre=@Id",
+                        new[] { new SqlParameter("@Id", id) });
+                    _acceso.Escribir("DELETE FROM Lote_Contenido WHERE IdLotePadre=@Id",
+                        new[] { new SqlParameter("@Id", id) });
+                    foreach (DataRow hijo in hijos.Rows)
+                        EliminarRecursivo(Convert.ToInt32(hijo["IdComponenteHijo"]));
+                }
+
+                _acceso.Escribir("DELETE FROM Lote_Contenido WHERE IdComponenteHijo=@Id",
+                    new[] { new SqlParameter("@Id", id) });
+                _acceso.Escribir("DELETE FROM UnidadesDeVenta WHERE Id=@Id",
+                    new[] { new SqlParameter("@Id", id) });
+            }
+            catch (Exception ex) { throw new Exception($"Error al eliminar recursivamente #{id}: {ex.Message}", ex); }
+        }
 
         public int ObtenerLotePadreDeComponente(int componenteId)
         {
