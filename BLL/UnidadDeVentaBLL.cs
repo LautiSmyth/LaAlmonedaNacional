@@ -1,4 +1,4 @@
-﻿using BE;
+using BE;
 using DAL;
 using Servicios;
 using System;
@@ -34,6 +34,10 @@ namespace BLL
         public void EliminarUnidad(int id)
         {
             if (id <= 0) throw new ArgumentException("Id inválido.");
+            if (_dal.TieneSubastaActiva(id))
+                throw new InvalidOperationException(
+                    "No se puede eliminar: esta unidad tiene una subasta activa en curso.\n" +
+                    "Cierre la subasta antes de eliminarla.");
             _dal.Eliminar(id);
             AuditoriaServicio.RegistrarLog($"Unidad de venta eliminada: Id={id}");
         }
@@ -92,6 +96,10 @@ namespace BLL
         public void EliminarLoteConContenido(int idLote)
         {
             if (idLote <= 0) throw new ArgumentException("Id inválido.");
+            if (_dal.TieneSubastaActivaRecursiva(idLote))
+                throw new InvalidOperationException(
+                    "No se puede eliminar: el lote o alguno de sus elementos tiene una subasta activa en curso.\n" +
+                    "Cierre todas las subastas activas relacionadas antes de eliminar el lote.");
             _dal.EliminarRecursivo(idLote);
             AuditoriaServicio.RegistrarLog($"Lote #{idLote} eliminado con todo su contenido (composición)");
         }
@@ -99,6 +107,10 @@ namespace BLL
         public void EliminarLoteSinContenido(int idLote)
         {
             if (idLote <= 0) throw new ArgumentException("Id inválido.");
+            if (_dal.TieneSubastaActiva(idLote))
+                throw new InvalidOperationException(
+                    "No se puede eliminar: el lote tiene una subasta activa en curso.\n" +
+                    "Cierre la subasta antes de eliminar el lote.");
             _dal.DesvinculrComponentes(idLote);
             _dal.Eliminar(idLote);
             AuditoriaServicio.RegistrarLog($"Lote #{idLote} eliminado; componentes desvinculados y conservados en inventario");

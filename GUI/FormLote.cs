@@ -1,7 +1,8 @@
-﻿using BE;
+using BE;
 using BLL;
 using System;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 
 namespace GUI
@@ -15,6 +16,7 @@ namespace GUI
         {
             InitializeComponent();
             AplicarEstilo();
+            ConfigurarLimitesEntrada();
             CargarLotes();
             CargarComponentesDisponibles();
         }
@@ -23,6 +25,12 @@ namespace GUI
         {
             trvLote.BackColor = Color.White;
             trvLote.BorderStyle = BorderStyle.FixedSingle;
+        }
+
+        private void ConfigurarLimitesEntrada()
+        {
+            txtNombreLote.MaxLength = 200;
+            txtDescLote.MaxLength   = 500;
         }
 
         private void CargarLotes()
@@ -44,7 +52,7 @@ namespace GUI
                 cmbComponentes.DataSource = null;
                 cmbComponentes.DataSource = catalogo;
                 cmbComponentes.DisplayMember = "Nombre";
-                cmbComponentes.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                cmbComponentes.AutoCompleteMode   = AutoCompleteMode.SuggestAppend;
                 cmbComponentes.AutoCompleteSource = AutoCompleteSource.ListItems;
             }
             catch (Exception ex) { MostrarError("Error al cargar catálogo", ex); }
@@ -54,11 +62,11 @@ namespace GUI
         {
             if (lstLotes.SelectedItem is Lote lote)
             {
-                _loteSeleccionado = lote;
-                txtNombreLote.Text = lote.Nombre;
-                txtDescLote.Text = lote.Descripcion;
-                btnActualizar.Enabled = true;
-                btnEliminarLote.Enabled = true;
+                _loteSeleccionado         = lote;
+                txtNombreLote.Text        = lote.Nombre;
+                txtDescLote.Text          = lote.Descripcion;
+                btnActualizar.Enabled     = true;
+                btnEliminarLote.Enabled   = true;
                 RefrescarArbolLote(lote.Id);
             }
         }
@@ -90,14 +98,14 @@ namespace GUI
             if (udv is Lote lote)
             {
                 var nodo = new TreeNode($"[Lote] {lote.Nombre}  (${lote.ObtenerPrecio():N2})")
-                { Tag = lote, ForeColor = Estilo.Header };
+                    { Tag = lote, ForeColor = Estilo.Header };
                 foreach (var comp in lote.ObtenerComponentes())
                     nodo.Nodes.Add(CrearNodoArbol(comp));
                 return nodo;
             }
             if (udv is Articulo art)
                 return new TreeNode($"[Artículo] {art.Nombre}  (${art.PrecioBase:N2})")
-                { Tag = art, ForeColor = Estilo.BtnSuccess };
+                    { Tag = art, ForeColor = Estilo.BtnSuccess };
             return new TreeNode(udv.Nombre);
         }
 
@@ -123,7 +131,7 @@ namespace GUI
             { MostrarAviso("El nombre no puede estar vacío."); return; }
             try
             {
-                _loteSeleccionado.Nombre = txtNombreLote.Text.Trim();
+                _loteSeleccionado.Nombre      = txtNombreLote.Text.Trim();
                 _loteSeleccionado.Descripcion = txtDescLote.Text.Trim();
                 _bll.ActualizarLote(_loteSeleccionado);
                 MostrarExito("Lote actualizado.");
@@ -135,15 +143,50 @@ namespace GUI
         private void btnEliminarLote_Click(object sender, EventArgs e)
         {
             if (_loteSeleccionado == null) return;
-            if (MessageBox.Show($"¿Eliminar el lote '{_loteSeleccionado.Nombre}'?",
-                "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+
+            if (MessageBox.Show(
+                    $"¿Eliminar el lote '{_loteSeleccionado.Nombre}'?",
+                    "Confirmar eliminación",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+
             try
             {
-                _bll.EliminarUnidad(_loteSeleccionado.Id);
+                UnidadDeVenta udv        = _bll.ObtenerPorId(_loteSeleccionado.Id);
+                bool          tieneHijos = udv is Lote lt && lt.ObtenerComponentes().Count > 0;
+
+                if (tieneHijos)
+                {
+                    var loteContenido = (Lote)udv;
+                    var sb = new StringBuilder();
+                    foreach (var comp in loteContenido.ObtenerComponentes())
+                        sb.AppendLine($"   • {comp.Nombre}  (${comp.ObtenerPrecio():N2})");
+
+                    var decision = MessageBox.Show(
+                        $"El lote contiene {loteContenido.ObtenerComponentes().Count} elemento(s):\n\n" +
+                        sb +
+                        "\n¿Desea ELIMINAR también todo el contenido?\n\n" +
+                        "   Sí      → elimina el lote y todos sus elementos permanentemente\n" +
+                        "   No      → elimina solo el lote; los elementos quedan libres en el inventario\n" +
+                        "   Cancelar → no realiza ninguna acción",
+                        "¿Qué hacer con el contenido?",
+                        MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+
+                    if (decision == DialogResult.Cancel) return;
+
+                    if (decision == DialogResult.Yes)
+                        _bll.EliminarLoteConContenido(_loteSeleccionado.Id);
+                    else
+                        _bll.EliminarLoteSinContenido(_loteSeleccionado.Id);
+                }
+                else
+                {
+                    _bll.EliminarUnidad(_loteSeleccionado.Id);
+                }
+
                 LimpiarFormulario();
                 CargarLotes();
                 CargarComponentesDisponibles();
-                MostrarExito("Lote eliminado.");
+                MostrarExito("Lote eliminado correctamente.");
             }
             catch (Exception ex) { MostrarError("Error al eliminar lote", ex); }
         }
@@ -155,27 +198,22 @@ namespace GUI
             if (!(cmbComponentes.SelectedItem is UnidadDeVenta udv)) return;
             if (udv.Id == _loteSeleccionado.Id)
             { MostrarAviso("Un lote no puede contenerse a sí mismo."); return; }
-
             try
             {
                 int lotePadreActual = _bll.ObtenerLotePadreDeComponente(udv.Id);
-
                 if (lotePadreActual == _loteSeleccionado.Id)
                 { MostrarAviso($"'{udv.Nombre}' ya pertenece a este lote."); return; }
 
                 if (lotePadreActual != 0)
                 {
-                    UnidadDeVenta loteActual = _bll.ObtenerPorId(lotePadreActual);
-                    string nombreLoteActual = loteActual?.Nombre ?? $"#{lotePadreActual}";
-
+                    UnidadDeVenta loteActual   = _bll.ObtenerPorId(lotePadreActual);
+                    string        nombreActual = loteActual?.Nombre ?? $"#{lotePadreActual}";
                     var respuesta = MessageBox.Show(
-                        $"'{udv.Nombre}' ya pertenece al lote '{nombreLoteActual}'.\n\n" +
-                        $"¿Deseas moverlo a '{_loteSeleccionado.Nombre}'?",
+                        $"'{udv.Nombre}' ya pertenece al lote '{nombreActual}'.\n\n" +
+                        $"¿Desea moverlo a '{_loteSeleccionado.Nombre}'?",
                         "Componente ya asignado",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
                     if (respuesta != DialogResult.Yes) return;
-
                     _bll.MoverComponente(lotePadreActual, _loteSeleccionado.Id, udv.Id);
                     RefrescarArbolLote(_loteSeleccionado.Id);
                     MostrarExito($"'{udv.Nombre}' movido correctamente a '{_loteSeleccionado.Nombre}'.");
@@ -206,18 +244,18 @@ namespace GUI
 
         private void LimpiarFormulario()
         {
-            _loteSeleccionado = null;
+            _loteSeleccionado       = null;
             txtNombreLote.Clear();
             txtDescLote.Clear();
             trvLote.Nodes.Clear();
-            lblPrecioLote.Text = "";
-            btnActualizar.Enabled = false;
+            lblPrecioLote.Text      = "";
+            btnActualizar.Enabled   = false;
             btnEliminarLote.Enabled = false;
             lstLotes.ClearSelected();
         }
 
         private void MostrarExito(string msg) =>
-            MessageBox.Show(msg, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(msg, "Éxito",    MessageBoxButtons.OK, MessageBoxIcon.Information);
         private void MostrarAviso(string msg) =>
             MessageBox.Show(msg, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         private void MostrarError(string ctx, Exception ex) =>
