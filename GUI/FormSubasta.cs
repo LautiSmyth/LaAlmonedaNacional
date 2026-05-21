@@ -165,8 +165,6 @@ namespace GUI
                     AgregarLog("Subasta no encontrada en memoria. Recargue la lista.", null, null);
                     return;
                 }
-                _subastaActual.OnNotificacion -= OnNotificacionSubasta;
-                _subastaActual.OnNotificacion += OnNotificacionSubasta;
                 _subastaActual.OnNotificacionSuscriptor -= OnNotificacionSuscriptorSubasta;
                 _subastaActual.OnNotificacionSuscriptor += OnNotificacionSuscriptorSubasta;
                 ActualizarPanelSubasta();
@@ -178,6 +176,7 @@ namespace GUI
             }
             catch (Exception ex) { MostrarError("Error al seleccionar subasta", ex); }
         }
+
 
         private void OnNotificacionSuscriptorSubasta(IObserver suscriptor, string mensaje)
         {
@@ -324,7 +323,7 @@ namespace GUI
             rtbLog.Clear();
             foreach (var entrada in _log)
             {
-                if (filtroPostor != null && !entrada.Mensaje.Contains(filtroPostor)) continue;
+                if (filtroPostor != null && entrada.PostorNombre != filtroPostor) continue;
                 if (filtroSubasta != null && entrada.SubastaNombre != filtroSubasta) continue;
                 rtbLog.AppendText($"[{entrada.Tiempo}]  {entrada.Mensaje}{Environment.NewLine}");
             }
