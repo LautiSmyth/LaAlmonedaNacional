@@ -15,7 +15,7 @@ namespace BLL
             ValidarNombre(nombre);
             if (precioBase < 0)
                 throw new ArgumentOutOfRangeException(nameof(precioBase), "El precio base no puede ser negativo.");
-            var articulo = new Articulo(nombre, descripcion, precioBase);
+            Articulo articulo = new Articulo(nombre, descripcion, precioBase);
             _dal.GuardarArticulo(articulo);
             AuditoriaServicio.RegistrarLog($"Artículo creado: '{nombre}' (${precioBase:N2}) Id={articulo.Id}");
             return articulo;
@@ -47,7 +47,7 @@ namespace BLL
         public Lote CrearLote(string nombre, string descripcion)
         {
             ValidarNombre(nombre);
-            var lote = new Lote(nombre, descripcion);
+            Lote lote = new Lote(nombre, descripcion);
             _dal.GuardarLote(lote);
             AuditoriaServicio.RegistrarLog($"Lote creado: '{nombre}' Id={lote.Id}");
             return lote;
